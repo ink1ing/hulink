@@ -104,7 +104,7 @@ cp converter.py mobile/converter.py
 cd mobile && buildozer android debug   # 产物: mobile/bin/*.apk
 ```
 
-也可直接用 CI：推送 `v*` 标签或手动触发 `.github/workflows/android.yml`，由 GitHub Actions 自动产出 APK 工件。正式上架需用 release keystore 对 APK 签名。
+正式上架需用 release keystore 对 APK 签名。
 
 ## 使用指南
 
