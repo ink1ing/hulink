@@ -8,61 +8,11 @@ permissions:
   contents: write
 
 jobs:
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt pyinstaller
-      - run: pyinstaller --noconfirm --clean --windowed --onefile --name Hulink gui.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: windows
-          path: dist/Hulink.exe
-
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt pyinstaller
-      - run: pyinstaller --noconfirm --clean --windowed --name Hulink gui.py
-      - run: |
-          hdiutil create -volname Hulink -srcfolder dist/Hulink.app -ov -format UDZO dist/Hulink.dmg
-          pkgbuild --install-location /Applications --component dist/Hulink.app dist/Hulink.pkg
-      - uses: actions/upload-artifact@v4
-        with:
-          name: macos
-          path: |
-            dist/Hulink.dmg
-            dist/Hulink.pkg
-
-  android:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: cp converter.py mobile/converter.py
-      - uses: ArtemSBulgakov/buildozer-action@v1
-        with:
-          workdir: mobile
-          command: buildozer android debug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: android
-          path: mobile/bin/*.apk
-
   release:
-    needs: [ windows, macos, android ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
+      - uses: actions/checkout@v4
+      # 仅发布源码版（GitHub 自动附带源码 zip/tar.gz）；可执行程序由开发者用 packaging/ 脚本自建
       - uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
           generate_release_notes: true
