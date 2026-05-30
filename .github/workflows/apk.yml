@@ -1,0 +1,33 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 安装构建依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y -qq build-essential ccache git zip unzip openjdk-17-jdk \
+            autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev
+          pip install --upgrade pip
+          pip install "cython<3.0" buildozer
+      - name: 准备共享核心
+        run: cp converter.py mobile/converter.py
+      - name: 构建 APK
+        working-directory: mobile
+        run: buildozer android debug
+      - name: 上传 APK 到 v0.2.0 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.2.0
+          files: mobile/bin/*.apk

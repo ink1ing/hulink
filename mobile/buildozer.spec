@@ -6,10 +6,11 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.2.0
 # converter.py 为共享核心，构建前由 CI / 手动从仓库根目录复制到本目录
-requirements = python3,kivy,requests,urllib3,certifi,charset-normalizer,idna,pyyaml
+requirements = python3,kivy,requests,pyyaml
 orientation = portrait
 android.permissions = INTERNET
-android.archs = arm64-v8a,armeabi-v7a
+android.archs = arm64-v8a
+android.accept_sdk_license = True
 android.allow_backup = True
 
 [buildozer]
