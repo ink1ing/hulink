@@ -14,10 +14,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
       - name: 安装构建依赖
         run: |
           sudo apt-get update
-          sudo apt-get install -y -qq build-essential ccache git zip unzip openjdk-17-jdk \
+          sudo apt-get install -y -qq build-essential ccache git zip unzip \
             autoconf automake libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev
           pip install --upgrade pip
           pip install "cython<3.0" "buildozer==1.5.0" "python-for-android==2024.1.21"
