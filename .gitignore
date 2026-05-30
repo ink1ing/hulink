@@ -211,3 +211,14 @@ test_*.txt
 *.swp
 *.swo
 *~
+
+# Hulink Android (buildozer)
+!mobile/buildozer.spec
+mobile/converter.py
+.buildozer/
+mobile/bin/
+*.apk
+*.aab
+
+# GitHub Actions 工作流（不受通用 *.yml 规则影响）
+!.github/workflows/*.yml

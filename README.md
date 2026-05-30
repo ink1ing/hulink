@@ -18,11 +18,19 @@
 - **VMess**: `vmess://` URI 格式、Base64 编码订阅
 - **Clash**: YAML 配置文件格式
 - **V2Ray**: JSON 配置文件、vmess:// 链接
+- **Trojan**: `trojan://` URI 格式
+- **VLESS**: `vless://` URI 格式（支持 TLS / Reality / WS）
+- **Hysteria2**: `hysteria2://`、`hy2://` URI 格式
+- **TUIC**: `tuic://` URI 格式（v5）
+- **ShadowsocksR**: `ssr://` URI 格式
+- **Hysteria v1**: `hysteria://` URI 格式
+- **AnyTLS**: `anytls://` URI 格式
 
 ### 输出格式
-- **Clash YAML**: 完整的 Clash 配置文件
+- **Clash YAML**: 完整的 Clash Meta (mihomo) 配置文件
 - **Shadowsocks Base64**: 标准的 SS 订阅格式
 - **V2Ray Base64**: 标准的 V2Ray 订阅格式
+- **通用 URI 订阅 Base64**: 各协议分享链接打包，兼容主流客户端
 
 ## 安装和使用
 
@@ -50,8 +58,51 @@ python3 main.py
 或使用启动脚本：
 
 ```bash
-./start.sh
+./start.sh        # macOS / Linux
+run.bat           # Windows
 ```
+
+### 图形用户面板（GUI）
+
+无需命令行，直接运行跨平台图形面板（基于 Tkinter，无额外依赖）：
+
+```bash
+python3 gui.py
+```
+
+面板流程：输入订阅链接 → 「获取并解析」→ 选择输出格式 → 「预览」或「转换并保存」。
+
+## 构建与发布（桌面端）
+
+打包为各平台原生程序（基于 PyInstaller）：
+
+```bash
+# Windows: 生成 dist\Hulink.exe
+packaging\build_windows.bat
+
+# macOS: 生成 dist/Hulink.app、Hulink.dmg、Hulink.pkg
+./packaging/build_macos.sh
+```
+
+发布矩阵：
+
+| 平台 | 产物 | 构建脚本 | 说明 |
+|---|---|---|---|
+| Windows | `Hulink.exe` | `packaging/build_windows.bat` | 需在 Windows 上构建 |
+| macOS | `Hulink.app` / `.dmg` / `.pkg` | `packaging/build_macos.sh` | 需在 macOS 上构建；未签名时 Gatekeeper 会拦截，正式发布需 `codesign` + `notarytool` |
+| Android | `Hulink.apk` | `mobile/` (Kivy + Buildozer) | 见下方说明；CI 自动构建，正式发布需 keystore 签名 |
+
+### Android 构建
+
+移动端为独立的 Kivy 应用（`mobile/`），复用根目录的 `converter.py` 核心。
+
+```bash
+# 本地（需 Linux + Android SDK/NDK；buildozer 仅支持在 Linux 上构建）
+cp converter.py mobile/converter.py
+cd mobile && buildozer android debug   # 产物: mobile/bin/*.apk
+```
+
+也可直接用 CI：推送 `v*` 标签或手动触发 `.github/workflows/android.yml`，由 GitHub Actions 自动产出 APK 工件。正式上架需用 release keystore 对 APK 签名。
 
 ## 使用指南
 
@@ -86,7 +137,12 @@ python3 main.py
 hulink/
 ├── main.py              # 主程序文件
 ├── requirements.txt     # 依赖包列表
-├── start.sh            # 启动脚本
+├── converter.py        # 核心转换逻辑 (各端复用，rich 可选)
+├── gui.py              # 图形用户面板 (Tkinter)
+├── start.sh            # 启动脚本 (macOS/Linux)
+├── run.bat             # 启动脚本 (Windows)
+├── packaging/          # 桌面端打包脚本 (exe/dmg/pkg)
+├── mobile/             # Android 应用 (Kivy + buildozer.spec)
 ├── test_links.py       # 测试脚本
 ├── README.md           # 项目说明文档
 ├── LICENSE             # MIT 许可证
@@ -116,7 +172,13 @@ hulink/
 
 ## 开发计划
 
-- [ ] 支持 Trojan 协议
+- [x] 支持 Trojan 协议
+- [x] 支持 VLESS 协议
+- [x] 支持 Hysteria2 协议
+- [x] 支持 TUIC 协议
+- [x] 支持 ShadowsocksR 协议
+- [x] 支持 Hysteria v1 协议
+- [x] 支持 AnyTLS 协议
 - [ ] 支持 Surge 配置格式
 - [ ] 添加配置文件验证功能
 - [ ] 支持批量订阅链接处理
