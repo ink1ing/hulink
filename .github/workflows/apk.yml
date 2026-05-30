@@ -18,9 +18,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y -qq build-essential ccache git zip unzip openjdk-17-jdk \
-            autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev
+            autoconf automake libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev
           pip install --upgrade pip
-          pip install "cython<3.0" buildozer
+          pip install "cython<3.0" "buildozer==1.5.0" "python-for-android==2024.1.21"
       - name: 准备共享核心
         run: cp converter.py mobile/converter.py
       - name: 构建 APK
